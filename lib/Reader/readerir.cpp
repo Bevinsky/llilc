@@ -2134,12 +2134,24 @@ void GenIR::fgDeleteBlock(FlowGraphNode *Node) {
   Block->eraseFromParent();
 }
 
+void GenIR::fgDeleteEdge(FlowGraphEdgeList *Arc) {
+  BasicBlock *Source = (BasicBlock *)Arc->getSource();
+  TerminatorInst *Term = Source->getTerminator();
+  if (Term) {
+    // FIXME: This doesn't work for all cases, e.g. conditional branches.
+    // If this is to work anywhere, it should attempt to
+    // convert conditional branches to unconditional ones.
+    Term->dropAllReferences();
+  }
+}
+
 void GenIR::fgDeleteNodesFromBlock(FlowGraphNode *Node) {
   // Note: this will remove all instructions in the block, including
   // the terminator, which means we'll lose track of the successor
   // blocks.  That's ok since the caller always wants to drop the
   // successor edges as well, but is a difference compared to legacy jits.
   BasicBlock *Block = (BasicBlock *)Node;
+  Block->dropAllReferences();
   Block->getInstList().clear();
 }
 

@@ -1948,19 +1948,19 @@ FlowGraphNodeOffsetList *ReaderBase::fgAddNodeMSILOffset(
 }
 
 void ReaderBase::fgDeleteBlockAndNodes(FlowGraphNode *Block) {
-  FlowGraphEdgeList *Arc, *ArcNext;
+  FlowGraphEdgeList *Arc;
 
   // TODO: decide if we want to rewrite this code.  Our implementation
   // of DeleteNodesFromBlock also deletes the successors.
 
   fgDeleteNodesFromBlock(Block);
 
-  for (Arc = fgNodeGetSuccessorList(Block); Arc != nullptr; Arc = ArcNext) {
-    ArcNext = fgEdgeListGetNextSuccessor(Arc);
+  for (Arc = fgNodeGetSuccessorList(Block); Arc != nullptr;
+       Arc = fgEdgeListGetNextSuccessor(Arc)) {
     fgDeleteEdge(Arc);
   }
-  for (Arc = fgNodeGetPredecessorList(Block); Arc != nullptr; Arc = ArcNext) {
-    ArcNext = fgEdgeListGetNextPredecessor(Arc);
+  for (Arc = fgNodeGetPredecessorList(Block); Arc != nullptr;
+       Arc = fgEdgeListGetNextPredecessor(Arc)) {
     fgDeleteEdge(Arc);
   }
 
